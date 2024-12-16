@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List-YOYO</title>
+    <link href="./output.css" rel="stylesheet">
+    <link rel="" type="" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="icon" type="image/x-icon" href="../img/icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playwrite+DE+VA+Guides&family=Playwrite+VN+Guides&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');   
+        *{
+            font-family: 'Roboto';
+        }
+        input{
+            outline: none;
+            border: none;
+            background: none;
+        }
+
+        .bg-gradient-theme{
+            background-color: #8BC6EC;
+            background-image: linear-gradient(135deg, #8BC6EC 0%, #9599E2 100%);
+            background-color: #85FFBD;
+            background-image: linear-gradient(45deg, #85FFBD 0%, #FFFB7D 100%);
+            background-color: #0093E9;
+            background-image: linear-gradient(160deg, #0093E9 0%, #80D0C7 100%);
+
+
+        }
+        .section{
+            height: calc(100vh - 40px);
+        }
+        .barre{
+            text-decoration: line-through;
+        }
+        summary::marker {
+            display: none;
+        }
+        .task::-webkit-scrollbar {
+            display: none; /* Pour les navigateurs basés sur WebKit (Chrome, Safari) */
+        }
+        .titre{
+            font-family: 'Playwrite DE VA Guides';
+        }
+        .test{
+            font-family: 'Playwrite VN Guides';
+        }
+    </style>
+</head>
+<body class="bg-gradient-theme h-screen flex flex-col gap-5">
+    <div class="logo flex items-center justify-center">
+        <img src="../img/logo.png" alt="" class="w-10 h-10 object-cover"> 
+        <h3 class="titre">To do list</h3>
+    </div>
+
+    <section class="section flex justify-center w-full shadow-2xl max-sm:relative max-sm:top-6">
+        <div class="container bg-white w-1/2 h-max px-7 py-5 rounded-2xl max-sm:w-3/4">
+            <div class="input-group flex items-center justify-center  w-max gap-x-2 max-sm:ml-0 max-sm:justify-normal max-sm:w-20">
+                <i class="fa-solid fa-list-check"></i>
+                <input type="text" placeholder="new task ?" class="sm:w-52 max-md:w-36" id="saisie">
+                <button id="add" class="text-sm px-3 py-2 bg-red-700 rounded-xl text-white">Add</button>
+            </div>
+
+            <div class="tasks mt-6 bg-none h-80 overflow-y-auto">
+
+            </div>
+        </div>
+    </section>
+
+
+    <script>
+        // Ajouter un écouteur global pour détecter les clics
+    document.addEventListener('click', function(event) {
+      // Récupérer tous les <details> ouverts
+      const openDetails = document.querySelectorAll('details');
+
+      // Boucler sur chaque <details> ouvert
+      openDetails.forEach(details => {
+        // Si le clic n'est pas à l'intérieur de l'élément <details>
+        if (!details.contains(event.target) && details.hasAttribute('open')) {
+          details.removeAttribute('open'); // Fermer le <details>
+        }
+      });
+    });
+      </script>
+
+      <script>
+        let add = document.querySelector('#add')
+let input = document.querySelector('#saisie')
+let tasks = document.querySelector('.tasks')
+
+
+
+
+//maj(document.querySelector('#update'))
+
+// create task : 
+add.addEventListener('click' , () => {
+    if(input.value.length === 0){
+        return;
+    }
+    let taskToDo = input.value
+    let task = createTask(taskToDo)
+    tasks.innerHTML += task
+    input.value = ""
+})
+
+
+
+
+
+function createTask(message){
+    return `<div class="task flex items-center justify-between hover:bg-slate-400 hover:shadow-lg hover:bg-opacity-5 rounded-xl px-6 py-4 max-sm:px-1 max-sm:pl-1.5 transition-all duration-100 overflow-x-auto">
+                <div class="task-group flex items-center gap-x-3">
+                    <i class="fa-solid fa-minus cursor-pointer py-1 px-1" onclick="switchCheck(this)"></i>
+                    <p class="text-sm line-clamp-1 pr-10 transition-all duration-150">${message}</p>
+                </div>
+                <details class="">
+                    <summary class="cursor-pointer"><i class="fa-solid fa-plus mr-4"></i></summary>
+                    <div class="options absolute bg-gray-500 text-gray-700 px-5 py-3 rounded-3xl shadow-xl">
+                        <button id="update" class="text-sm py-2 px-1 font-semibold hover:font-normal transition-all duration-100" onclick="maj(this)">Update</button>
+                        <button id="delete" class="text-sm py-2 px-1 font-semibold hover:font-normal transition-all duration-100" onclick="del(this)">Delete</button>
+                    </div>
+                </details>
+            </div>`
+}
+
+// delete task :
+function del(target){
+    target.parentElement.parentElement.parentElement.remove()
+}
+
+//update task : 
+function maj(target){
+    const text = target.parentElement.parentElement.previousElementSibling.children[1].innerHTML
+    target.parentElement.parentElement.previousElementSibling.children[1].innerHTML = ""
+    target.parentElement.parentElement.previousElementSibling.children[1].innerHTML = `
+    <input type="text" class="update-input" value="${text}" onblur="change(this)" onclick="save(this)" autofocus>
+    `
+
+}
+
+function save(target){
+    const task = target.value
+    return task
+}
+
+function change(target){
+    const message = target.value , parent = target.parentElement
+    target.remove()
+    if(target.value.length === 0){
+        parent.classList.add("text-red-600")
+        parent.innerHTML = `task to specify`
+    }
+    else{
+        if(parent.classList.contains("text-red-600")){
+            parent.classList.remove("text-red-600")
+        }
+        parent.innerHTML = message
+    }
+}
+
+
+
+
+
+
+
+
+function switchCheck(target){
+    if(target.classList.contains( "fa-minus")){
+        target.classList.remove("fa-minus")
+        target.classList.add("fa-check")
+        target.nextElementSibling.classList.add("barre")
+    }else{
+        target.classList.remove("fa-check")
+        target.classList.add("fa-minus")
+        target.nextElementSibling.classList.remove("barre")
+    }
+}
+ 
+      </script>
+</body>
+</html>
